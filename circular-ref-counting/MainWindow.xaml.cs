@@ -278,14 +278,15 @@ namespace circular_ref_counting
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        // <PackageReference Include="IVSoftware.Portable.Disposable" Version="1.2.0" />
         public DisposableHost RefCount
         {
             get
             {
-                if (_originator is null)
+                if (_refCount is null)
                 {
-                    _originator = new DisposableHost();
-                    _originator.FinalDispose += (sender, e) =>
+                    _refCount = new DisposableHost();
+                    _refCount.FinalDispose += (sender, e) =>
                     {
                         foreach (var propertyName in new[]
                         {
@@ -297,9 +298,9 @@ namespace circular_ref_counting
                         }
                     };
                 }
-                return _originator;
+                return _refCount;
             }
         }
-        DisposableHost? _originator = default;
+        DisposableHost? _refCount = default;
     }
 }
