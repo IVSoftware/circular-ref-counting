@@ -27,23 +27,6 @@ namespace circular_ref_counting
     }
     class MainWindowDataContext : INotifyPropertyChanged
     {
-        public DisposableHost Originator
-        {
-            get
-            {
-                if (_originator is null)
-                {
-                    _originator = new DisposableHost();
-                    _originator.BeginUsing += (sender, e) =>
-                    { };
-                    _originator.FinalDispose += (sender, e) =>
-                    { };
-                }
-                return _originator;
-            }
-        }
-        DisposableHost? _originator = default;
-
         public bool One
         {
             get => _one;
@@ -122,104 +105,7 @@ namespace circular_ref_counting
                 }
             }
         }
-        bool _four = default;
-
-        public bool All
-        {
-            get => _all;
-            set
-            {
-                if (!Equals(_all, value))
-                {
-                    _all = value;
-                    if (All)
-                    {
-                        Odd = false;
-                        Even = false;
-                        None = false;
-                        One = true;
-                        Two = true;
-                        Three = true;
-                        Four = true;
-                    }
-                    OnPropertyChanged();
-                }
-            }
-        }
-        bool _all = default;
-
-        public bool Even
-        {
-            get => _even;
-            set
-            {
-                if (!Equals(_even, value))
-                {
-                    _even = value;
-                    if (Even)
-                    {
-                        All = false;
-                        Odd = false;
-                        None = false;
-                        One = true;
-                        Two = false;
-                        Three = true;
-                        Four = false;
-                    }
-                    OnPropertyChanged();
-                }
-            }
-        }
-        bool _even = default;
-
-        public bool Odd
-        {
-            get => _odd;
-            set
-            {
-                if (!Equals(_odd, value))
-                {
-                    _odd = value;
-                    if (Odd)
-                    {
-                        All = false;
-                        Even = false;
-                        None = false;
-                        All = false;
-                        One = false;
-                        Two = true;
-                        Three = false;
-                        Four = true;
-                    }
-                    OnPropertyChanged();
-                }
-            }
-        }
-        bool _odd = default;
-
-        public bool None
-        {
-            get => _none;
-            set
-            {
-                if (!Equals(_none, value))
-                {
-                    _none = value;
-                    if (None)
-                    {
-                        All = false;
-                        Even = false;
-                        Odd = false;
-                        One = false;
-                        Two = false;
-                        Three = false;
-                        Four = false;
-                    }
-                    OnPropertyChanged();
-                }
-            }
-        }
-        bool _none = default;
+        bool _four = default;               
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
