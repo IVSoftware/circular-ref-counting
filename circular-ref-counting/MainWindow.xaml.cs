@@ -1,6 +1,7 @@
 ﻿using IVSoftware.Portable.Disposable;
 using System.ComponentModel;
 using System.Configuration.Internal;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
@@ -272,6 +273,7 @@ namespace circular_ref_counting
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            Debug.WriteLine($"Originator: {propertyName}" );
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -283,17 +285,15 @@ namespace circular_ref_counting
                 if (_originator is null)
                 {
                     _originator = new DisposableHost();
-                    _originator.BeginUsing += (sender, e) =>
-                    { };
                     _originator.FinalDispose += (sender, e) =>
                     {
-                        foreach (var name in new[]
+                        foreach (var propertyName in new[]
                         {
                             nameof(One), nameof(Two), nameof(Three), nameof(Four),
                             nameof(All), nameof(Even), nameof(Odd), nameof(None),
                         })
                         {
-                            OnPropertyChanged(name);
+                            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
                         }
                     };
                 }
