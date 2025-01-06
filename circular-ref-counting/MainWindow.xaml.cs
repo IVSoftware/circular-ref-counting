@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using IVSoftware.Portable.Disposable;
+using System.ComponentModel;
+using System.Configuration.Internal;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
@@ -25,6 +27,23 @@ namespace circular_ref_counting
     }
     class MainWindowDataContext : INotifyPropertyChanged
     {
+        public DisposableHost Originator
+        {
+            get
+            {
+                if (_originator is null)
+                {
+                    _originator = new DisposableHost();
+                    _originator.BeginUsing += (sender, e) =>
+                    { };
+                    _originator.FinalDispose += (sender, e) =>
+                    { };
+                }
+                return _originator;
+            }
+        }
+        DisposableHost? _originator = default;
+
         public bool One
         {
             get => _one;
@@ -33,6 +52,12 @@ namespace circular_ref_counting
                 if (!Equals(_one, value))
                 {
                     _one = value;
+                    if(One)
+                    {
+                        Two = false;
+                        Three = false;
+                        Four = false;
+                    }
                     OnPropertyChanged();
                 }
             }
@@ -47,6 +72,12 @@ namespace circular_ref_counting
                 if (!Equals(_two, value))
                 {
                     _two = value;
+                    if (Two)
+                    {
+                        One = false;
+                        Three = false;
+                        Four = false;
+                    }
                     OnPropertyChanged();
                 }
             }
@@ -61,6 +92,12 @@ namespace circular_ref_counting
                 if (!Equals(_three, value))
                 {
                     _three = value;
+                    if (Three)
+                    {
+                        One = false;
+                        Two = false;
+                        Four = false;
+                    }
                     OnPropertyChanged();
                 }
             }
@@ -75,6 +112,12 @@ namespace circular_ref_counting
                 if (!Equals(_four, value))
                 {
                     _four = value;
+                    if (Four)
+                    {
+                        One = false;
+                        Two = false;
+                        Three = false;
+                    }
                     OnPropertyChanged();
                 }
             }
