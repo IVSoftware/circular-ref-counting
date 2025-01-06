@@ -27,22 +27,6 @@ namespace circular_ref_counting
     }
     class MainWindowDataContext : INotifyPropertyChanged
     {
-        public DisposableHost Originator
-        {
-            get
-            {
-                if (_originator is null)
-                {
-                    _originator = new DisposableHost();
-                    _originator.BeginUsing += (sender, e) =>
-                    { };
-                    _originator.FinalDispose += (sender, e) =>
-                    { };
-                }
-                return _originator;
-            }
-        }
-        DisposableHost? _originator = default;
 
         public bool One
         {
@@ -52,13 +36,23 @@ namespace circular_ref_counting
                 if (!Equals(_one, value))
                 {
                     _one = value;
-                    if(One)
+                    if (RefCount.IsZero())
                     {
-                        Two = false;
-                        Three = false;
-                        Four = false;
+                        using (RefCount.GetToken())
+                        {
+                            if (One)
+                            {
+                                Two = false;
+                                Three = false;
+                                Four = false;
+                                All = false;
+                                Odd = false;
+                                Even = false;
+                                None = false;
+                            }
+                            OnPropertyChanged();
+                        }
                     }
-                    OnPropertyChanged();
                 }
             }
         }
@@ -72,13 +66,23 @@ namespace circular_ref_counting
                 if (!Equals(_two, value))
                 {
                     _two = value;
-                    if (Two)
+                    if (RefCount.IsZero())
                     {
-                        One = false;
-                        Three = false;
-                        Four = false;
+                        using (RefCount.GetToken())
+                        {
+                            if (Two)
+                            {
+                                One = false;
+                                Three = false;
+                                Four = false;
+                                All = false;
+                                Odd = false;
+                                Even = false;
+                                None = false;
+                            }
+                            OnPropertyChanged();
+                        }
                     }
-                    OnPropertyChanged();
                 }
             }
         }
@@ -92,13 +96,23 @@ namespace circular_ref_counting
                 if (!Equals(_three, value))
                 {
                     _three = value;
-                    if (Three)
+                    if (RefCount.IsZero())
                     {
-                        One = false;
-                        Two = false;
-                        Four = false;
+                        using (RefCount.GetToken())
+                        {
+                            if (Three)
+                            {
+                                One = false;
+                                Two = false;
+                                Four = false;
+                                All = false;
+                                Odd = false;
+                                Even = false;
+                                None = false;
+                            }
+                            OnPropertyChanged();
+                        }
                     }
-                    OnPropertyChanged();
                 }
             }
         }
@@ -112,13 +126,23 @@ namespace circular_ref_counting
                 if (!Equals(_four, value))
                 {
                     _four = value;
-                    if (Four)
+                    if (RefCount.IsZero())
                     {
-                        One = false;
-                        Two = false;
-                        Three = false;
+                        using (RefCount.GetToken())
+                        {
+                            if (Four)
+                            {
+                                One = false;
+                                Two = false;
+                                Three = false;
+                                All = false;
+                                Odd = false;
+                                Even = false;
+                                None = false;
+                            }
+                            OnPropertyChanged();
+                        }
                     }
-                    OnPropertyChanged();
                 }
             }
         }
@@ -132,17 +156,23 @@ namespace circular_ref_counting
                 if (!Equals(_all, value))
                 {
                     _all = value;
-                    if (All)
+                    if (RefCount.IsZero())
                     {
-                        Odd = false;
-                        Even = false;
-                        None = false;
-                        One = true;
-                        Two = true;
-                        Three = true;
-                        Four = true;
+                        using (RefCount.GetToken())
+                        {
+                            if (All)
+                            {
+                                Odd = false;
+                                Even = false;
+                                None = false;
+                                One = true;
+                                Two = true;
+                                Three = true;
+                                Four = true;
+                            }
+                            OnPropertyChanged();
+                        }
                     }
-                    OnPropertyChanged();
                 }
             }
         }
@@ -156,17 +186,23 @@ namespace circular_ref_counting
                 if (!Equals(_even, value))
                 {
                     _even = value;
-                    if (Even)
+                    if (RefCount.IsZero())
                     {
-                        All = false;
-                        Odd = false;
-                        None = false;
-                        One = true;
-                        Two = false;
-                        Three = true;
-                        Four = false;
+                        using (RefCount.GetToken())
+                        {
+                            if (Even)
+                            {
+                                All = false;
+                                Odd = false;
+                                None = false;
+                                One = false;
+                                Two = true;
+                                Three = false;
+                                Four = true;
+                            }
+                            OnPropertyChanged();
+                        }
                     }
-                    OnPropertyChanged();
                 }
             }
         }
@@ -180,18 +216,24 @@ namespace circular_ref_counting
                 if (!Equals(_odd, value))
                 {
                     _odd = value;
-                    if (Odd)
+                    if (RefCount.IsZero())
                     {
-                        All = false;
-                        Even = false;
-                        None = false;
-                        All = false;
-                        One = false;
-                        Two = true;
-                        Three = false;
-                        Four = true;
+                        using (RefCount.GetToken())
+                        {
+                            if (Odd)
+                            {
+                                All = false;
+                                Even = false;
+                                None = false;
+                                All = false;
+                                One = true;
+                                Two = false;
+                                Three = true;
+                                Four = false;
+                            }
+                            OnPropertyChanged();
+                        }
                     }
-                    OnPropertyChanged();
                 }
             }
         }
@@ -205,25 +247,59 @@ namespace circular_ref_counting
                 if (!Equals(_none, value))
                 {
                     _none = value;
-                    if (None)
+                    if (RefCount.IsZero())
                     {
-                        All = false;
-                        Even = false;
-                        Odd = false;
-                        One = false;
-                        Two = false;
-                        Three = false;
-                        Four = false;
+                        using (RefCount.GetToken())
+                        {
+                            if (None)
+                            {
+                                All = false;
+                                Even = false;
+                                Odd = false;
+                                One = false;
+                                Two = false;
+                                Three = false;
+                                Four = false;
+                            }
+                            OnPropertyChanged();
+                        }
                     }
-                    OnPropertyChanged();
                 }
             }
         }
         bool _none = default;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        public DisposableHost RefCount
+        {
+            get
+            {
+                if (_originator is null)
+                {
+                    _originator = new DisposableHost();
+                    _originator.BeginUsing += (sender, e) =>
+                    { };
+                    _originator.FinalDispose += (sender, e) =>
+                    {
+                        foreach (var name in new[]
+                        {
+                            nameof(One), nameof(Two), nameof(Three), nameof(Four),
+                            nameof(All), nameof(Even), nameof(Odd), nameof(None),
+                        })
+                        {
+                            OnPropertyChanged(name);
+                        }
+                    };
+                }
+                return _originator;
+            }
+        }
+        DisposableHost? _originator = default;
     }
 }

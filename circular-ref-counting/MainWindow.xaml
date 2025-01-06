@@ -33,8 +33,8 @@
         <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical" Margin="10">
             <TextBlock Text="Group Checkboxes" FontWeight="Bold" Margin="0,0,0,10" />
             <CheckBox Content="Check All" Name="CheckAll" Margin="0,5" IsChecked="{Binding All}" />
-            <CheckBox Content="Check Even" Name="CheckEven" Margin="0,5" IsChecked="{Binding Even}" />
             <CheckBox Content="Check Odd" Name="CheckOdd" Margin="0,5" IsChecked="{Binding Odd}" />
+            <CheckBox Content="Check Even" Name="CheckEven" Margin="0,5" IsChecked="{Binding Even}" />
             <CheckBox Content="Check None" Name="CheckNone" Margin="0,5" IsChecked="{Binding None}" />
         </StackPanel>
     </Grid>
