@@ -1,4 +1,4 @@
-Your post is describing come complex logic interactions, and shows an attempt to manage this using an `IMultiValueConverter`, It goes on to describe some behaviors that could perhaps be attributed to circularity in the logic, which is sometimes tricky to avoid with bound properties. And finally, you ask:
+﻿Your post is describing come complex logic interactions, and shows an attempt to manage this using an `IMultiValueConverter`, It goes on to describe some behaviors that could perhaps be attributed to circularity in the logic, which is sometimes tricky to avoid with bound properties. And finally, you ask:
 
 >is there a better way to do this?
 
@@ -7,7 +7,9 @@ ___
 
 **Simple Case using One-Hot Checkboxes**
 
-Here's the basic idea: suppose that any of four checkboxes will cancel the other three if it becomes checked. This is trivial to implement in the VM if checkboxes follow this representative boolean binding:
+Here's the basic idea: suppose that any checkbox ☐ 1, ☐ 2, ☐ 3, or ☐ 4 will cancel the other three if it becomes checked. This is trivial to implement in the VM if checkboxes follow this representative boolean binding:
+
+[![one-hot checkboxes][1]][1]
 
 ~~~
 class MainWindowDataContext : INotifyPropertyChanged
@@ -36,14 +38,15 @@ class MainWindowDataContext : INotifyPropertyChanged
     .
 }
 ~~~
+___
 
 **Minimal Example of Deliberately Conflicting Logic**
 
-But if four checkboxes for All, Odd, Even and None are added, it creates an immediate and obvious conflict. These, too, are one-hot with respect to each other, but in addition to that it's plain to see that if `All` attempts to check all the singles, when every single is wired to cancel aLL the other singles when toggled true, then we've got a real problem.
+But if four checkboxes for ☐ All, ☐ Odd, ☐ Even and ☐ None are added, it creates an immediate and obvious conflict. These, too, are one-hot with respect to each other but it's also plain to see that if setting the All checkbox attempts to check all the singles in turn, when every single is wired to cancel all of the other singles when toggled true, then we've got a real problem.
 
-##### Pathological
+###### Pathological
 
-This _will not work_. It conflicts with the one-hot behavior of the single checkboxes.
+This property implementation for the All checkbox _will not work_. It conflicts with the one-hot behavior of the single checkboxes.
 
 ~~~
 public bool All
@@ -70,12 +73,17 @@ public bool All
 }
 bool _all = default;
 ~~~
+___
 
 **Solution using IDisposable Ref Counting**
 
-The logic scheme can be made stateful very easily, where the first property to change checks out an `IDisposable` token that suppresses the property change logic and events of all the other properties that occur within a using block. Then, when the token disposes, the UI is updated en masse by firing all of the property changes to push the backing store values to the UI. You might be able to do this with a simple boolean, or using various ref counting schemes. I use this particular NuGet because I'm familiar with it. Here, a singleton instance of `DisposableHost` is set up to fire the notifications when the token count goes to zero, and two representative properties show how the `using` blocks work.
+[![circular no more][2]][2]
+
+The logic scheme can be made stateful very easily, where the first property to change checks out an `IDisposable` token that suppresses the property change logic and events of all the other properties that occur within a using block. Then, when the token disposes, the UI is updated en masse by firing all of the property changes to push the backing store values to the UI. You can use "any" ref counting scheme or maybe even get away with using a simple bool flag. I chose this particular NuGet only because I'm so familiar with it. Here, a singleton instance of `DisposableHost` is set up to fire the notifications when the token count goes to zero, and two representative properties show how the `using` blocks work.
 
 ~~~
+// <PackageReference Include="IVSoftware.Portable.Disposable" Version="1.2.0" />
+using IVSoftware.Portable.Disposable;
 class MainWindowDataContext : INotifyPropertyChanged
 {
 
@@ -178,3 +186,7 @@ class MainWindowDataContext : INotifyPropertyChanged
     DisposableHost? _refCount = default;
 }
 ~~~
+
+
+  [1]: https://i.sstatic.net/4aD9eHPL.png
+  [2]: https://i.sstatic.net/rU0dnsLk.png
