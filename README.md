@@ -2,12 +2,12 @@ Your post is describing come complex logic interactions, and shows an attempt to
 
 >is there a better way to do this?
 
-So what I want to do is describe _another_ way to go achieve a result with as minimal an example as I can come up with, with emphasis on implementing the logic in the view model instead of overburdening a, `IMultiValueCOnverter.`
+I can only say that there is at least one _alternative_ way to go about it: Instead of overburdening an `IMultiValueConverter` you could try moving all of the logic into the view model/data context where you could mitigate circularity and/or conflicting logic with a boolean, semaphore, or reference-counting scheme that is owned by the "first property to change" and that persists until all the changes have propagated. In short, that is my suggestion, with of this answer just being details to hopefully make it clearer what I mean by that.
 ___
 
 **Simple Case using One-Hot Checkboxes**
 
-To demonstrate the basic idea, suppose that any of four checkboxes will cancel the other three if it becomes checked. This is trivial to implement in the VM if checkboxes follow this representative boolean binding:
+Here's the basic idea: suppose that any of four checkboxes will cancel the other three if it becomes checked. This is trivial to implement in the VM if checkboxes follow this representative boolean binding:
 
 ~~~
 class MainWindowDataContext : INotifyPropertyChanged
@@ -39,7 +39,7 @@ class MainWindowDataContext : INotifyPropertyChanged
 
 **Minimal Example of Deliberately Conflicting Logic**
 
-Now we will add four checkboxes for All, Odd, Even and None, creating an immediate and obvious conflict. These, too, are one-hot with respect to each other, but in addition to that it's plain to see that if `All` attemts to check all the singles, but every single cancels the other singles when checked, we've got a real problem.
+But if four checkboxes for All, Odd, Even and None are added, it creates an immediate and obvious conflict. These, too, are one-hot with respect to each other, but in addition to that it's plain to see that if `All` attempts to check all the singles, when every single is wired to cancel aLL the other singles when toggled true, then we've got a real problem.
 
 ##### Pathological
 
@@ -149,9 +149,10 @@ class MainWindowDataContext : INotifyPropertyChanged
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         Debug.WriteLine($"Originator: {propertyName}" );
     }
-
     public event PropertyChangedEventHandler? PropertyChanged;
+    
 
+   // <PackageReference Include="IVSoftware.Portable.Disposable" Version="1.2.0" />
     public DisposableHost RefCount
     {
         get

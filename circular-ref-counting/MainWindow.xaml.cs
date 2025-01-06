@@ -46,11 +46,11 @@ namespace circular_ref_counting
                                 Two = false;
                                 Three = false;
                                 Four = false;
-                                All = false;
-                                Odd = false;
-                                Even = false;
-                                None = false;
                             }
+                            All = false;
+                            Odd = false;
+                            Even = false;
+                            None = false;
                             OnPropertyChanged();
                         }
                     }
@@ -76,11 +76,11 @@ namespace circular_ref_counting
                                 One = false;
                                 Three = false;
                                 Four = false;
-                                All = false;
-                                Odd = false;
-                                Even = false;
-                                None = false;
                             }
+                            All = false;
+                            Odd = false;
+                            Even = false;
+                            None = false;
                             OnPropertyChanged();
                         }
                     }
@@ -106,11 +106,11 @@ namespace circular_ref_counting
                                 One = false;
                                 Two = false;
                                 Four = false;
-                                All = false;
-                                Odd = false;
-                                Even = false;
-                                None = false;
                             }
+                            All = false;
+                            Odd = false;
+                            Even = false;
+                            None = false;
                             OnPropertyChanged();
                         }
                     }
@@ -136,11 +136,11 @@ namespace circular_ref_counting
                                 One = false;
                                 Two = false;
                                 Three = false;
-                                All = false;
-                                Odd = false;
-                                Even = false;
-                                None = false;
                             }
+                            All = false;
+                            Odd = false;
+                            Even = false;
+                            None = false;
                             OnPropertyChanged();
                         }
                     }
