@@ -1,0 +1,41 @@
+﻿<Window x:Class="circular_ref_counting.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:circular_ref_counting"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="300" Width="500">
+    <Window.DataContext>
+        <local:MainWindowDataContext/>
+    </Window.DataContext>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Individual Checkboxes -->
+        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Vertical" Margin="10">
+            <TextBlock Text="Individual Checkboxes" FontWeight="Bold" Margin="0,0,0,10" />
+            <CheckBox Content="1" Name="CheckBox1" Margin="0,5" IsChecked="{Binding One}" />
+            <CheckBox Content="2" Name="CheckBox2" Margin="0,5" IsChecked="{Binding Two}" />
+            <CheckBox Content="3" Name="CheckBox3" Margin="0,5" IsChecked="{Binding Three}" />
+            <CheckBox Content="4" Name="CheckBox4" Margin="0,5" IsChecked="{Binding Four}" />
+        </StackPanel>
+
+        <!-- Group Checkboxes -->
+        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical" Margin="10">
+            <TextBlock Text="Group Checkboxes" FontWeight="Bold" Margin="0,0,0,10" />
+            <CheckBox Content="Check All" Name="CheckAll" Margin="0,5" IsChecked="{Binding All}" />
+            <CheckBox Content="Check Even" Name="CheckEven" Margin="0,5" IsChecked="{Binding Even}" />
+            <CheckBox Content="Check Odd" Name="CheckOdd" Margin="0,5" IsChecked="{Binding Odd}" />
+            <CheckBox Content="Check None" Name="CheckNone" Margin="0,5" IsChecked="{Binding None}" />
+        </StackPanel>
+    </Grid>
+</Window>

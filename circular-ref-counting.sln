@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "circular-ref-counting", "circular-ref-counting\circular-ref-counting.csproj", "{305C1BAA-C302-430C-99BC-1118CE910A3F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{305C1BAA-C302-430C-99BC-1118CE910A3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{305C1BAA-C302-430C-99BC-1118CE910A3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{305C1BAA-C302-430C-99BC-1118CE910A3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{305C1BAA-C302-430C-99BC-1118CE910A3F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
