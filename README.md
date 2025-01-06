@@ -187,6 +187,77 @@ class MainWindowDataContext : INotifyPropertyChanged
 }
 ~~~
 
+___
+
+**(From Comment) Integrating with Properties.Settings.Default**
+
+If you have a settings resource, then it should be used as the canonical backing store. The properties in this case would follow this pattern:
+
+~~~
+public bool One
+{
+    get => Properties.Settings.Default.One;
+    set
+    {
+        if (!Equals(Properties.Settings.Default.One, value))
+        {
+            Properties.Settings.Default.One = value;
+            if (RefCount.IsZero())
+            {
+                using (RefCount.GetToken())
+                {
+                    if (One)
+                    {
+                        Two = false;
+                        Three = false;
+                        Four = false;
+                    }
+                    All = false;
+                    Odd = false;
+                    Even = false;
+                    None = false;
+                    OnPropertyChanged();
+                }
+            }
+        }
+    }
+}
+.
+.
+.
+~~~
+___
+
+###### Save
+
+~~~
+public DisposableHost RefCount
+{
+    get
+    {
+        if (_refCount is null)
+        {
+            _refCount = new DisposableHost();
+            _refCount.FinalDispose += (sender, e) =>
+            {
+                foreach (var propertyName in new[]
+                {
+                    nameof(One), nameof(Two), nameof(Three), nameof(Four),
+                    nameof(All), nameof(Even), nameof(Odd), nameof(None),
+                })
+                {
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                }
+                // This ensures a single save operation 
+                // after all the properties have settled.
+                Properties.Settings.Default.Save(); 
+            };
+        }
+        return _refCount;
+    }
+}
+DisposableHost? _refCount = default;
+~~~
 
   [1]: https://i.sstatic.net/4aD9eHPL.png
   [2]: https://i.sstatic.net/rU0dnsLk.png

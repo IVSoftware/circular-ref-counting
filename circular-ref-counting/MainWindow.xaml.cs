@@ -1,18 +1,8 @@
 ﻿using IVSoftware.Portable.Disposable;
 using System.ComponentModel;
-using System.Configuration.Internal;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace circular_ref_counting
 {
@@ -28,23 +18,6 @@ namespace circular_ref_counting
     }
     class MainWindowDataContext : INotifyPropertyChanged
     {
-        public MainWindowDataContext()
-        {
-            using (RefCount.GetToken(properties: new Dictionary<string, object>
-            {
-                { "Loading", true }
-            }))
-            {
-                One = Properties.Settings.Default.One;
-                Two = Properties.Settings.Default.Two;
-                Three = Properties.Settings.Default.Three;
-                Four = Properties.Settings.Default.Four;
-                All = Properties.Settings.Default.All;
-                Odd = Properties.Settings.Default.Odd;
-                Even = Properties.Settings.Default.Even;
-                None = Properties.Settings.Default.None;
-            }
-        }
         public bool One
         {
             get => Properties.Settings.Default.One;
@@ -304,14 +277,7 @@ namespace circular_ref_counting
                         {
                             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
                         }
-                        if(_refCount.TryGetValue("Loading", out var value) && Equals(value, true))
-                        {
-                            // Being called as a result of the initial load.
-                        }
-                        else
-                        {
-                            Properties.Settings.Default.Save();
-                        }
+                        Properties.Settings.Default.Save();
                     };
                 }
                 return _refCount;
