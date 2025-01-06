@@ -28,15 +28,31 @@ namespace circular_ref_counting
     }
     class MainWindowDataContext : INotifyPropertyChanged
     {
-
+        public MainWindowDataContext()
+        {
+            using (RefCount.GetToken(properties: new Dictionary<string, object>
+            {
+                { "Loading", true }
+            }))
+            {
+                One = Properties.Settings.Default.One;
+                Two = Properties.Settings.Default.Two;
+                Three = Properties.Settings.Default.Three;
+                Four = Properties.Settings.Default.Four;
+                All = Properties.Settings.Default.All;
+                Odd = Properties.Settings.Default.Odd;
+                Even = Properties.Settings.Default.Even;
+                None = Properties.Settings.Default.None;
+            }
+        }
         public bool One
         {
-            get => _one;
+            get => Properties.Settings.Default.One;
             set
             {
-                if (!Equals(_one, value))
+                if (!Equals(Properties.Settings.Default.One, value))
                 {
-                    _one = value;
+                    Properties.Settings.Default.One = value;
                     if (RefCount.IsZero())
                     {
                         using (RefCount.GetToken())
@@ -57,16 +73,15 @@ namespace circular_ref_counting
                 }
             }
         }
-        bool _one = default;
 
         public bool Two
         {
-            get => _two;
+            get => Properties.Settings.Default.Two;
             set
             {
-                if (!Equals(_two, value))
+                if (!Equals(Properties.Settings.Default.Two, value))
                 {
-                    _two = value;
+                    Properties.Settings.Default.Two = value;
                     if (RefCount.IsZero())
                     {
                         using (RefCount.GetToken())
@@ -87,16 +102,15 @@ namespace circular_ref_counting
                 }
             }
         }
-        bool _two = default;
 
         public bool Three
         {
-            get => _three;
+            get => Properties.Settings.Default.Three;
             set
             {
-                if (!Equals(_three, value))
+                if (!Equals(Properties.Settings.Default.Three, value))
                 {
-                    _three = value;
+                    Properties.Settings.Default.Three = value;
                     if (RefCount.IsZero())
                     {
                         using (RefCount.GetToken())
@@ -117,16 +131,15 @@ namespace circular_ref_counting
                 }
             }
         }
-        bool _three = default;
 
         public bool Four
         {
-            get => _four;
+            get => Properties.Settings.Default.Four;
             set
             {
-                if (!Equals(_four, value))
+                if (!Equals(Properties.Settings.Default.Four, value))
                 {
-                    _four = value;
+                    Properties.Settings.Default.Four = value;
                     if (RefCount.IsZero())
                     {
                         using (RefCount.GetToken())
@@ -147,16 +160,15 @@ namespace circular_ref_counting
                 }
             }
         }
-        bool _four = default;
 
         public bool All
         {
-            get => _all;
+            get => Properties.Settings.Default.All;
             set
             {
-                if (!Equals(_all, value))
+                if (!Equals(Properties.Settings.Default.All, value))
                 {
-                    _all = value;
+                    Properties.Settings.Default.All = value;
                     if (RefCount.IsZero())
                     {
                         using (RefCount.GetToken())
@@ -177,46 +189,15 @@ namespace circular_ref_counting
                 }
             }
         }
-        bool _all = default;
-
-        public bool Even
-        {
-            get => _even;
-            set
-            {
-                if (!Equals(_even, value))
-                {
-                    _even = value;
-                    if (RefCount.IsZero())
-                    {
-                        using (RefCount.GetToken())
-                        {
-                            if (Even)
-                            {
-                                All = false;
-                                Odd = false;
-                                None = false;
-                                One = false;
-                                Two = true;
-                                Three = false;
-                                Four = true;
-                            }
-                            OnPropertyChanged();
-                        }
-                    }
-                }
-            }
-        }
-        bool _even = default;
 
         public bool Odd
         {
-            get => _odd;
+            get => Properties.Settings.Default.Odd;
             set
             {
-                if (!Equals(_odd, value))
+                if (!Equals(Properties.Settings.Default.Odd, value))
                 {
-                    _odd = value;
+                    Properties.Settings.Default.Odd = value;
                     if (RefCount.IsZero())
                     {
                         using (RefCount.GetToken())
@@ -238,16 +219,44 @@ namespace circular_ref_counting
                 }
             }
         }
-        bool _odd = default;
+
+        public bool Even
+        {
+            get => Properties.Settings.Default.Even;
+            set
+            {
+                if (!Equals(Properties.Settings.Default.Even, value))
+                {
+                    Properties.Settings.Default.Even = value;
+                    if (RefCount.IsZero())
+                    {
+                        using (RefCount.GetToken())
+                        {
+                            if (Even)
+                            {
+                                All = false;
+                                Odd = false;
+                                None = false;
+                                One = false;
+                                Two = true;
+                                Three = false;
+                                Four = true;
+                            }
+                            OnPropertyChanged();
+                        }
+                    }
+                }
+            }
+        }
 
         public bool None
         {
-            get => _none;
+            get => Properties.Settings.Default.None;
             set
             {
-                if (!Equals(_none, value))
+                if (!Equals(Properties.Settings.Default.None, value))
                 {
-                    _none = value;
+                    Properties.Settings.Default.None = value;
                     if (RefCount.IsZero())
                     {
                         using (RefCount.GetToken())
@@ -268,7 +277,6 @@ namespace circular_ref_counting
                 }
             }
         }
-        bool _none = default;
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
@@ -295,6 +303,14 @@ namespace circular_ref_counting
                         })
                         {
                             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                        }
+                        if(_refCount.TryGetValue("Loading", out var value) && Equals(value, true))
+                        {
+                            // Being called as a result of the initial load.
+                        }
+                        else
+                        {
+                            Properties.Settings.Default.Save();
                         }
                     };
                 }
