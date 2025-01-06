@@ -132,6 +132,12 @@ namespace circular_ref_counting
                 if (!Equals(_all, value))
                 {
                     _all = value;
+                    if (All)
+                    {
+                        Odd = false;
+                        Even = false;
+                        None = false;
+                    }
                     OnPropertyChanged();
                 }
             }
@@ -146,6 +152,12 @@ namespace circular_ref_counting
                 if (!Equals(_even, value))
                 {
                     _even = value;
+                    if (Even)
+                    {
+                        All = false;
+                        Odd = false;
+                        None = false;
+                    }
                     OnPropertyChanged();
                 }
             }
@@ -160,6 +172,12 @@ namespace circular_ref_counting
                 if (!Equals(_odd, value))
                 {
                     _odd = value;
+                    if (Odd)
+                    {
+                        All = false;
+                        Even = false;
+                        None = false;
+                    }
                     OnPropertyChanged();
                 }
             }
@@ -174,6 +192,12 @@ namespace circular_ref_counting
                 if (!Equals(_none, value))
                 {
                     _none = value;
+                    if (None)
+                    {
+                        All = false;
+                        Even = false;
+                        Odd = false;
+                    }
                     OnPropertyChanged();
                 }
             }
